@@ -1,5 +1,6 @@
 """Тесты распределения. Запуск: python -m pytest -q"""
 import random
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -73,22 +74,26 @@ def test_permutation_invariance():
 
 
 def test_invariants_on_random_data():
-    """Требования 1 и 2 на 500 случайных кейсах: сумма ≤ available, каждая отгрузка 0 или
-    кратна и ≥ минимальной партии, перегруз ≤ одной кратности, некорректные заявки получают 0.
-    Сломается при любой ошибке в округлении, остатке или возврате исключённых."""
+    """Требования 1 и 2 на 500 случайных кейсах с кривыми данными: сумма ≤ available, отгрузка 0 или кратна
+    и ≥ минимальной партии, перегруз ≤ одной кратности, demand < 0 и priority < 1 → 0, rounding = 0 → как 1.
+    Сломается при любой ошибке в округлении, остатке, возврате исключённых или валидации."""
     rng = random.Random(42)
     for _ in range(500):
-        reqs = [Request(f"R{i:02d}", priority=rng.randint(1, 3), demand_qty=rng.randint(0, 120),
+        reqs = [Request(f"R{i:02d}", priority=rng.randint(0, 3), demand_qty=rng.randint(-20, 120),
                         min_lot=rng.choice([0, 0, rng.randint(1, 150)]),
-                        rounding_value=rng.choice([1, 5, 7, 10, 25]))
+                        rounding_value=rng.choice([0, 1, 5, 7, 10, 25]))
                 for i in range(rng.randint(1, 8))]
         available = rng.randint(0, 400)
         plan = allocate(available, reqs)
         assert sum(plan.values()) <= available
         for r in reqs:
             q = plan[r.request_id]
+            if r.priority < 1 or r.demand_qty < 0:
+                assert q == 0, r
+                continue
             if q == 0:
                 continue
+            r = replace(r, rounding_value=r.rounding_value or 1)
             assert q % r.rounding_value == 0, r
             assert q >= _effective_min(r), r
             assert q <= _round_up(r.demand_qty, r.rounding_value), r
