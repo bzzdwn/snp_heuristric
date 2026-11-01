@@ -1,0 +1,293 @@
+<title>Распределение дефицита</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+
+<style>
+  :root {
+    --ground: #f4f6f8;
+    --surface: #ffffff;
+    --surface-sunk: #eceff3;
+    --ink: #141a20;
+    --ink-soft: #4a5762;
+    --ink-faint: #7b8894;
+    --rule: #d5dce3;
+    --rule-soft: #e5eaef;
+    --accent: #1b3a5c;
+    --accent-soft: #e3ebf3;
+    --open: #8a5a12;
+    --open-soft: #f7eeda;
+
+    --font-ui: "Archivo", "Segoe UI", system-ui, sans-serif;
+    --font-read: "Source Serif 4", Georgia, serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", monospace;
+
+    --measure: 68ch;
+    --page: 940px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0e1317; --surface: #161d23; --surface-sunk: #1d262e;
+      --ink: #e6ebef; --ink-soft: #a7b4bf; --ink-faint: #7c8994;
+      --rule: #2b363f; --rule-soft: #222c34;
+      --accent: #8ab6dd; --accent-soft: #1c2b39;
+      --open: #d9a961; --open-soft: #32281a;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #0e1317; --surface: #161d23; --surface-sunk: #1d262e;
+    --ink: #e6ebef; --ink-soft: #a7b4bf; --ink-faint: #7c8994;
+    --rule: #2b363f; --rule-soft: #222c34;
+    --accent: #8ab6dd; --accent-soft: #1c2b39;
+    --open: #d9a961; --open-soft: #32281a;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--font-ui);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: var(--page); margin: 0 auto; padding: 0 24px 96px; }
+
+  header.hero { padding: 56px 0 34px; border-bottom: 2px solid var(--ink); }
+  .eyebrow {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--accent);
+  }
+  h1 {
+    font-size: clamp(30px, 4.4vw, 44px); line-height: 1.08; font-weight: 700;
+    letter-spacing: -0.02em; margin: 14px 0 0; text-wrap: balance;
+  }
+  .standfirst {
+    font-family: var(--font-read); font-size: 18px; line-height: 1.6;
+    color: var(--ink-soft); max-width: var(--measure); margin: 16px 0 0;
+  }
+  .facts {
+    margin-top: 28px; display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1px; background: var(--rule); border: 1px solid var(--rule);
+  }
+  .fact { background: var(--surface); padding: 13px 16px; }
+  .fact dt {
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--ink-faint);
+  }
+  .fact dd {
+    margin: 6px 0 0; font-size: 19px; font-weight: 600;
+    letter-spacing: -0.01em; font-variant-numeric: tabular-nums;
+  }
+
+  section { padding-top: 48px; }
+  h2 { font-size: 24px; font-weight: 700; letter-spacing: -0.015em; margin: 10px 0 0; text-wrap: balance; }
+  h3 { font-size: 16px; font-weight: 600; margin: 30px 0 8px; }
+  p, li { font-family: var(--font-read); }
+  section > p, .lede { max-width: var(--measure); color: var(--ink-soft); font-size: 16px; }
+  .lede { margin: 12px 0 0; }
+  code { font-family: var(--font-mono); font-size: 0.88em; background: var(--surface-sunk); padding: 1px 5px; border-radius: 2px; }
+
+  ul.tight, ol.tight { max-width: var(--measure); padding-left: 20px; margin: 12px 0 0; }
+  ul.tight li, ol.tight li { margin-bottom: 8px; color: var(--ink-soft); font-size: 15.5px; }
+  ol.tight li::marker { font-family: var(--font-ui); font-weight: 600; color: var(--ink); }
+
+  .scroll { overflow-x: auto; margin-top: 18px; border: 1px solid var(--rule); background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; min-width: 520px; }
+  th, td { text-align: left; vertical-align: top; padding: 10px 14px; border-bottom: 1px solid var(--rule-soft); }
+  thead th {
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.11em;
+    text-transform: uppercase; color: var(--ink-faint); background: var(--surface-sunk);
+    border-bottom: 1px solid var(--rule); white-space: nowrap;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  td { font-family: var(--font-read); font-size: 14.5px; color: var(--ink-soft); }
+  td.key { font-family: var(--font-mono); font-size: 12.5px; color: var(--ink); white-space: nowrap; font-weight: 500; }
+
+  /* fixed vs open decisions */
+  .fixed {
+    margin-top: 20px; border: 1px solid var(--accent); background: var(--accent-soft);
+    padding: 18px 20px;
+  }
+  .fixed .label, .open .label {
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.13em;
+    text-transform: uppercase; display: block; margin-bottom: 8px;
+  }
+  .fixed .label { color: var(--accent); }
+  .fixed ol { margin: 0; padding-left: 20px; max-width: var(--measure); }
+  .fixed li { color: var(--ink); font-size: 15.5px; margin-bottom: 6px; }
+  .fixed li:last-child { margin-bottom: 0; }
+
+  .open {
+    margin-top: 18px; border: 1px dashed var(--open); background: var(--open-soft);
+    padding: 18px 20px;
+  }
+  .open .label { color: var(--open); }
+  .open ul { margin: 0; padding-left: 20px; max-width: var(--measure); }
+  .open li { color: var(--ink); font-size: 15.5px; margin-bottom: 6px; }
+  .open li:last-child { margin-bottom: 0; }
+
+  .callout {
+    margin-top: 22px; border-left: 3px solid var(--accent); background: var(--surface);
+    padding: 14px 18px; max-width: var(--measure);
+  }
+  .callout p { margin: 0; font-size: 15px; color: var(--ink-soft); }
+  .callout strong { color: var(--ink); }
+
+  pre {
+    margin-top: 16px; background: var(--surface); border: 1px solid var(--rule);
+    padding: 15px 18px; overflow-x: auto; font-family: var(--font-mono);
+    font-size: 12.5px; line-height: 1.7; color: var(--ink-soft);
+  }
+  pre .kw { color: var(--accent); font-weight: 500; }
+
+  footer {
+    margin-top: 60px; padding-top: 18px; border-top: 1px solid var(--rule);
+    font-size: 13px; color: var(--ink-faint); font-family: var(--font-mono);
+  }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">Тестовое задание · модуль SNP Heuristic</div>
+    <h1>Распределение дефицита</h1>
+    <p class="standfirst">Доступного объёма меньше, чем просят. Нужно решить, кто и сколько получит — и суметь объяснить, почему именно так.</p>
+
+    <dl class="facts">
+      <div class="fact"><dt>Бюджет времени</dt><dd>3–4 часа</dd></div>
+      <div class="fact"><dt>Ядро алгоритма</dt><dd>≤ 150 строк</dd></div>
+      <div class="fact"><dt>Отчёт</dt><dd>1–2 стр.</dd></div>
+      <div class="fact"><dt>Защита</dt><dd>устная</dd></div>
+    </dl>
+  </header>
+
+  <section>
+    <h2>Прежде чем начать</h2>
+    <p class="lede"><strong>Не укладываетесь в 3–4 часа — не доделывайте.</strong> Опишите в отчёте, что осталось и почему. Незаконченная, но осмысленная работа ценится выше «полной», которую вы не можете объяснить.</p>
+
+    <h3>Про ИИ-ассистентов</h3>
+    <p>Использовать ИИ-ассистентов можно и нужно — мы сами пользуемся ими каждый день. Но защита задания устная: 30–40 минут вопросов вида «почему так, а не иначе» и «что сломается, если…», плюс живая правка кода под изменённое требование.</p>
+    <div class="callout">
+      <p><strong>Код и текст, которые вы не можете объяснить и изменить на месте, считаются отсутствующими.</strong> Поэтому важен не объём, а то, чтобы каждое решение было вашим осознанным выбором.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Контекст</div>
+    <h2>Что делает модуль</h2>
+    <p class="lede">SNP Heuristic строит объёмный план цепи поставок: проходит по периодам и уровням сети — заводы, распределительные центры, точки продаж — и на каждом шаге решает, как распределить ограниченный доступный объём между конкурирующими потребностями.</p>
+    <p class="lede">Ваша задача — спроектировать и реализовать <strong>одну элементарную операцию этого алгоритма</strong>: распределение доступного объёма одной позиции в одном периоде между несколькими заявками. Кусок маленький, но именно в нём сосредоточена почти вся неоднозначность модуля.</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">Вход</div>
+    <h2>Данные</h2>
+
+    <h3><code>data/supply.csv</code> — доступный объём</h3>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Поле</th><th>Смысл</th></tr></thead>
+        <tbody>
+          <tr><td class="key">case_id</td><td>Идентификатор независимого тест-кейса</td></tr>
+          <tr><td class="key">period, item,<br>source_location</td><td>Что и где распределяем</td></tr>
+          <tr><td class="key">available_qty</td><td>Сколько единиц физически доступно к отгрузке</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3><code>data/requests.csv</code> — заявки на этот объём</h3>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Поле</th><th>Смысл</th></tr></thead>
+        <tbody>
+          <tr><td class="key">case_id</td><td>К какому кейсу относится заявка</td></tr>
+          <tr><td class="key">request_id,<br>dest_location</td><td>Кто просит</td></tr>
+          <tr><td class="key">priority</td><td>Приоритет заявки, <strong>1 — наивысший</strong></td></tr>
+          <tr><td class="key">demand_qty</td><td>Сколько запрошено</td></tr>
+          <tr><td class="key">min_lot</td><td>Минимальная партия отгрузки; 0 — ограничения нет</td></tr>
+          <tr><td class="key">rounding_value</td><td>Кратность отгрузки: отгружаемое количество должно быть кратно этому значению</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="lede" style="margin-top:18px">Кейсы независимы: каждый <code>case_id</code> — отдельная задача распределения.</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">Требуется · 1</div>
+    <h2>Правило распределения</h2>
+    <p class="lede">Сформулируйте и реализуйте правило распределения. Жёстко заданы только три требования.</p>
+
+    <div class="fixed">
+      <span class="label">Зафиксировано — нарушать нельзя</span>
+      <ol>
+        <li>Сумма отгрузок по кейсу не превышает <code>available_qty</code>.</li>
+        <li>Отгрузка каждой заявке — либо 0, либо количество, удовлетворяющее её ограничениям <code>min_lot</code> и <code>rounding_value</code>.</li>
+        <li>Результат детерминирован: повторный запуск на тех же данных даёт ровно тот же план.</li>
+      </ol>
+    </div>
+
+    <div class="open">
+      <span class="label">Ваше проектное решение</span>
+      <ul>
+        <li>Как соотносятся приоритет и пропорциональность — жёсткий приоритет, мягкий вес, что-то ещё — и что из этого лучше для бизнеса.</li>
+        <li>Можно ли отгружать больше <code>demand_qty</code>, если этого требует кратность.</li>
+        <li>Что делать с остатком, который нельзя раздать из-за кратностей и минимальных партий.</li>
+        <li>Как разрешать ничьи между равноприоритетными заявками.</li>
+        <li>Как вести себя на некорректных или противоречивых данных.</li>
+      </ul>
+    </div>
+
+    <div class="callout">
+      <p>Постановка намеренно неполная — так к нам приходят задачи от бизнеса. Мы смотрим не на то, угадали ли вы «правильный» ответ (его нет), а на то, <strong>как вы обнаружили пробелы, какое решение приняли и как его обосновали</strong>.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Требуется · 2</div>
+    <h2>Код</h2>
+<pre><span class="kw">def</span> allocate(available_qty: <span class="kw">int</span>, requests: Iterable[Request]) -&gt; <span class="kw">dict</span>[<span class="kw">str</span>, <span class="kw">int</span>]:
+    ...</pre>
+    <ul class="tight">
+      <li>Python 3.10+, стандартная библиотека. <code>pandas</code> и <code>numpy</code> — по желанию, не обязательны.</li>
+      <li><strong>Ядро алгоритма — не более 150 строк</strong> без учёта тестов, чтения CSV и вывода.</li>
+      <li>Точка входа считает все кейсы из CSV и выводит результат в читаемом виде: какая заявка сколько получила и сколько осталось нераспределённым.</li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="eyebrow">Требуется · 3</div>
+    <h2>Тесты</h2>
+    <p class="lede"><code>pytest</code>. Помимо кейсов из CSV добавьте <strong>минимум два собственных</strong>, которые придумали сами.</p>
+    <p class="lede">Для каждого теста — одна строка: какое поведение он фиксирует и что сломается, если это поведение изменить.</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">Требуется · 4</div>
+    <h2>Отчёт <code>REPORT.md</code></h2>
+    <p class="lede">Одна–две страницы, не больше.</p>
+    <ol class="tight">
+      <li><strong>Журнал решений</strong> — 3–5 ключевых развилок. По каждой: что выбрали, какую альтернативу отвергли и почему. <em>Без этого раздела работа не рассматривается.</em></li>
+      <li><strong>Что не так во входных данных и в постановке</strong> — список замеченных проблем и как вы с каждой поступили.</li>
+      <li><strong>Три вопроса аналитику</strong> — те, ответы на которые реально изменили бы вашу реализацию. Не «уточните формат даты».</li>
+      <li><strong>Границы применимости</strong> — где ваше правило даст плохой план и почему.</li>
+      <li><strong>Масштаб</strong> — что произойдёт, если кейсов 5 млн (все периоды × все позиции × вся сеть) и расчёт должен укладываться в окно ночного пересчёта.</li>
+      <li><strong>Многопериодность</strong> — только рассуждение, без кода. В реальном модуле распределение идёт по периодам подряд, а неудовлетворённый спрос переносится вперёд. Почему жадное пооперационное распределение может дать плохой итоговый уровень сервиса и что бы вы с этим делали?</li>
+    </ol>
+  </section>
+
+  <section>
+    <div class="eyebrow">Сдача</div>
+    <h2>Формат</h2>
+    <p class="lede">Git-репозиторий или архив: код, тесты, <code>REPORT.md</code>, <code>README</code> с одной командой запуска. Работа должна запускаться на чистом окружении.</p>
+  </section>
+
+  <footer>In.Plan · SNP Heuristic · тестовое задание</footer>
+</div>
